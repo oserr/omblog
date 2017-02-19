@@ -1,2 +1,5 @@
 # Compiled python files
 *.pyc
+
+# vi backup files
+*.swp
