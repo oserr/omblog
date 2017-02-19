@@ -96,8 +96,8 @@ function putCommentBack(form) {
 }
 
 /**
- * Sends request to server to edit comment, and replaces old comment with new
- * comment.
+ * Sends request to a server to edit a comment, and replaces old comment with
+ * new comment.
  * @param {Event} e - An event from the form to edit a comment.
  */
 function editComment(e) {
