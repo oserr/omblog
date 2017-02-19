@@ -1,5 +1,7 @@
+// Adds event listners for warning messages tied to username/password inputs.
 clearWarningOnInput('inputUsername', 'warning-msg-register');
 
+// Sends registration request to server.
 (function doRegister() {
   var form = document.getElementById('account-form');
   addEvent(form, 'submit', function(e) {
