@@ -25,7 +25,6 @@ import datetime
 import os
 import hmac
 import json
-import collections
 import string
 
 import jinja2
