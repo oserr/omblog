@@ -1,3 +1,11 @@
+# models.py
+"""
+Contains definitions for the following database object models:
+- Account
+- Blog
+- BlogComment
+"""
+
 from datetime import datetime
 from datetime import timedelta
 
