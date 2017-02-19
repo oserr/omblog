@@ -1,0 +1,43 @@
+{% extends "index.html" %}
+{% block title %}om-blog{% endblock %}
+{% block head %}
+  {% include "bootstrap-css.html" %}
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/signin.css">
+{% endblock %}
+{% block content %}
+  <header class="jumbotron">
+    <h1><a href="/">OM-BLOG</a></h1>
+  </header>
+  <div class="container">
+    <form id="account-form" class="form-signin" action="/{{ primary_action }}" method="post">
+      {% if primary_action == 'do-register' %}
+      <p id="warning-msg-register" class="hidden-warning warning"><b id="username-taken"></b> is already taken. Please select a different username.<p>
+      {% else %}
+      <p id="warning-msg-user-login" class="hidden-warning warning"><b id="bad-username"></b> does not exist. Please try again.<p>
+      <p id="warning-msg-pwd-login" class="hidden-warning warning">Password for <b id="bad-password"></b> does not match.<p>
+      {% endif %}
+      <h2 class="form-signin-heading">Please {{ action }}</h2>
+      <label for="inputUsername" class="sr-only">Username</label>
+      <input type="text" id="inputUsername" class="form-control" name="user" placeholder="Username"
+        pattern="^[a-z][a-z\d._]{2,34}" required autofocus
+        title="The username must begin with a letter, and must contain between 3 and 35 alphanumeric characters, dots, or underscores.">
+      <label for="inputPassword" class="sr-only">Password</label>
+      <input type="password" id="inputPassword" class="form-control" name="password" placeholder="Password"
+        required pattern="(?=.*\d)(?=.*[a-z])\S{6,35}"
+        title="Password must contain one digit, one letter, and at least 6 non-white space characters">
+      <button class="btn btn-lg btn-block" type="submit">{{ action|capitalize }}</button>
+      <a href="/{{ secondary_action }}"><small>{{ message }}</small></a>
+    </form>
+  </div> <!-- /container -->
+{% endblock %}
+{% block js %}
+  {% include "jquery-js.html" %}
+  {% include "bootstrap-js.html" %}
+  <script src="/js/util.js"></script>
+  {% if primary_action == 'do-register' %}
+  <script src="/js/register.js"></script>
+  {% else %}
+  <script src="/js/login.js"></script>
+  {% endif %}
+{% endblock %}

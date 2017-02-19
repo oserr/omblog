@@ -1,0 +1,12 @@
+<div class="row" id="{{ comment.key.urlsafe() }}">
+  <div class="col-md-8 col-centered">
+    <time class="comment-date" datetime="{{ comment.date }}">
+      <b>{{ comment.user }}</b> &bull; <small>{{ comment.get_timedelta() }}</small>
+    </time>
+    <p>{{ comment.comment }}</p>
+    {% if comment.is_author(user) %}
+    <a class="btn btn-default edit-comment" data-id="{{ comment.key.urlsafe() }}"><small>Edit</small></a>
+    <a class="btn btn-default delete-comment" data-id="{{ comment.key.urlsafe() }}"><small>Delete</small></a>
+    {% endif %}
+  </div>
+</div>

@@ -1,0 +1,44 @@
+{% extends "index.html" %}
+{% block title %}om-blog{% endblock %}
+{% block head %}
+  {% include "bootstrap-css.html" %}
+  {% include "font-awesome.html" %}
+  <link rel="stylesheet" href="/css/style.css">
+{% endblock %}
+{% block content %}
+  <header class="jumbotron">
+    <h1>OM-BLOG</h1>
+    <p class="login-buttons">
+      {% if loggedin %}
+      <a class="btn btn-default" href="/blog-form" role="button">Create Blog</a>
+      <a class="btn btn-default" href="/signout" role="button">Signout</a>
+      {% else %}
+      <a class="btn btn-default" href="/login" role="button">Login</a>
+      <a class="btn btn-default" href="/register" role="button">Register</a>
+      {% endif %}
+    </p>
+  </header>
+  <div class="container">
+    {% for item in blog_titles %}
+    <article class="row post-preview">
+      <header class="col-md-8 preview-header width-padding col-centered">
+        <h1 class="h2"><a href="/blog/{{ item.key.urlsafe() }}">{{ item.title }}</a></h1>
+        <time class="article-date" datetime="{{ item.date }}">
+          Posted {{ item.date.strftime('%d %B %Y') }} by {{ item.user }}
+        </time>
+      </header>
+      <div class="col-md-8 article-content col-centered">
+        <p>{{ item.tease }}</p>
+        <p>
+          <i class="fa fa-thumbs-up"> {{ item.likes|count }}</i> &bull;
+          <a class="read-on-link" href="/blog/{{ item.key.urlsafe() }}">Read on...</a>
+        </p>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+{% endblock %}
+{% block js %}
+  {% include "jquery-js.html" %}
+  {% include "bootstrap-js.html" %}
+{% endblock %}

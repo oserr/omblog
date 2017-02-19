@@ -1,0 +1,67 @@
+{% extends "index.html" %}
+{% block title %}om-blog{% endblock %}
+{% block head %}
+  {% include "bootstrap-css.html" %}
+{% endblock %}
+{% block content %}
+  <!-- TODO: move styling to css -->
+  <div class="container" style="margin-top: 40px;">
+    <form method="post" action="/do-register" class="login-form" id="register-form">
+      {% if badname %}
+        <div class="row badname">
+          <div class="col-xs-6">
+            <p>The username must begin with a letter, and must contain between 3 and 35 alphanumeric characters, dots, or underscores.</p>
+          </div>
+        </div>
+      {% elif nametaken %}
+        <div class="row nametaken">
+          <div class="col-xs-6">
+            <p>The username {{ name }} is already taken.</p>
+          </div>
+        </div>
+      {% endif %}
+      <div class="row">
+        <!-- TODO: remove offset when screen gets small -->
+        <div class="form-group col-xs-6">
+          <label for="input-username">Username</label>
+          <input type="text" class="form-control" id="input-username" name="user" pattern="^[a-z][a-z\d._]{3,35}"
+            title="The username must begin with a letter, and must contain between 3 and 35 alphanumeric characters, dots, or underscores.">
+        </div>
+      </div>
+      <div class="row">
+        {% if badpwd %}
+          <div class="row badpwd">
+            <div class="col-xs-6">
+              <p>Password must contain one digit, one letter, and at least 6 non-white space characters</p>
+            </div>
+          </div>
+        {% endif %}
+        <!-- TODO: remove offset when screen gets small -->
+        <div class="form-group col-xs-6">
+          <label for="input-password">Password</label>
+          <input type="password" class="form-control" id="input-password" name="password"
+            pattern="(?=.*\d)(?=.*[a-z])\S{6,35}"
+            title="Password must contain one digit, one letter, and at least 6 non-white space characters">
+        </div>
+      </div>
+      <div class="row">
+        <!-- TODO: remove offset when screen gets small -->
+        <div class="col-xs-6">
+          <button type="submit" class="btn btn-primary">Register</button>
+        </div>
+      </div>
+    </form>
+    <hr>
+    <div class="row">
+      <div class="col-xs-6">
+        <p>Have an account already?<p>
+        <a class="btn btn-primary h1" href="/login" role="button">Login</a>
+      </div>
+    </div>
+  </div>
+  </div>
+{% endblock %}
+{% block js %}
+  {% include "jquery-js.html" %}
+  {% include "bootstrap-js.html" %}
+{% endblock %}
