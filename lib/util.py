@@ -10,26 +10,6 @@ import string
 
 from models import Account
 
-def process_password(password):
-    """Returns true if the password is valid, false otherwise.
-
-    The password is valid if it contains between 6 and 35 characters, at least
-    one number, at least one alpha character, and no whitespace.
-
-    :param password
-        The password to validate.
-    """
-    m = re.match(r'\S{6,35}$', password)
-    if not m: return False
-    for c in password:
-        if c in string.ascii_letters: break
-    else:
-        return False
-    for c in password:
-        if c in string.digits: return True
-    return False
-
-
 def gensalt(length=16):
     """Generate a random salt value for a password.
 
