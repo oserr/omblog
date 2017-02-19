@@ -396,7 +396,6 @@ class ViewBlogHandler(BaseHandler):
             context['user'] = self.user
             account = models.Account.get_by_id(self.user)
             if account.key in blog.likes:
-                context['like_status'] = True
                 context['heart'] = 'red-heart'
         return self.render(context, 'blog.html')
 
@@ -417,7 +416,6 @@ class ViewBlogHandler(BaseHandler):
             'loggedin': login_status,
             'blog_id': blog.key.urlsafe(),
             'comments': comments,
-            'like_status': False,
             'heart': 'normal',
             'user': user
         }
