@@ -1,3 +1,8 @@
+# util.py
+"""
+Contains utility functions used by handlers.
+"""
+
 import hmac
 import random
 import re
