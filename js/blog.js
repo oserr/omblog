@@ -144,6 +144,11 @@ function deleteComment(e) {
   xhr.send(JSON.stringify({'id': e.currentTarget.dataset.id}));
 }
 
+/**
+ * Sends request to a server to create a comment, and displays the new comment
+ * in the blog page.
+ * @param {Event} e - An event to create a comment.
+ */
 function createComment(e) {
   e.preventDefault();
   let xhr = new XMLHttpRequest();
