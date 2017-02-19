@@ -10,25 +10,6 @@ import string
 
 from models import Account
 
-def process_username(username):
-    """Converts the username to lowercase, and returns a MatchObject if the
-    username is valid.
-
-    The username must begin with an alpha character, must be at least 4
-    characters long, and it may only contain alphanumeric characters, dots, and
-    underscores.
-
-    :param username
-        The username to validate.
-    :return
-        None or the match group.
-    """
-    username = username.strip().lower()
-    m = re.match(r'[a-z][a-z\d._]{3,35}$', username)
-    if m: return m.group()
-    return None
-
-
 def process_password(password):
     """Returns true if the password is valid, false otherwise.
 
