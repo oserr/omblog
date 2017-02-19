@@ -46,8 +46,10 @@ function createCommentForm(commentNode) {
   return form;
 }
 
-// Hides a comment and displays a form to edit a given comment, bringing focus
-// to the form.
+/**
+ * Hides a comment and displays a form to edit the comment.
+ * @param {Event} e - An event dispatched to edit a comment.
+ */
 function tryEditComment(e) {
   e.preventDefault();
   let comment = document.getElementById(e.currentTarget.dataset.id);
