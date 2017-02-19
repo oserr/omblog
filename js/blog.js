@@ -1,4 +1,10 @@
-// Create a form input element that listens to click events.
+/**
+ * Creates a DOM input element of type submit, and attaches event listener to
+ * it.
+ * @param {string} action - The action for the post form.
+ * @param {string} value - The value of the button.
+ * @return An input DOM element.
+ */
 function createInputSubmit(action, value) {
   let input = document.createElement('input');
   input.type = 'submit';
