@@ -86,12 +86,20 @@ function refreshComment(data) {
   addEvent(comment.querySelector('.edit-comment'), 'click', tryEditComment);
 }
 
-// Removes the form to edit a comment and re-displays the original comment.
+/**
+ * Removes the form to edit a comment, and re-displays the original comment.
+ * @param {Element} form - A DOM form element.
+ */
 function putCommentBack(form) {
   form.previousElementSibling.style.display = 'block';
   form.parentNode.removeChild(form);
 }
 
+/**
+ * Sends request to server to edit comment, and replaces old comment with new
+ * comment.
+ * @param {Event} e - An event from the form to edit a comment.
+ */
 function editComment(e) {
   e.preventDefault();
   let form = e.currentTarget;
