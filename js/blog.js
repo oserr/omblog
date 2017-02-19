@@ -170,6 +170,11 @@ function createComment(e) {
   xhr.send(msg);
 }
 
+/**
+ * Sends a request to a server to update the recommendation count for a given
+ * blog post.
+ * @param {Event} e - An event to like or unlike a blog post.
+ */
 function clickLike(e) {
   e.preventDefault();
   let xhr = new XMLHttpRequest();
