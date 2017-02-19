@@ -1,6 +1,6 @@
 # Multi User Blog
 
-## 3rd Project in Udacity's Full Stack Web Developer Nanodegree
+3rd Project in Udacity's Full Stack Web Developer Nanodegree.
 
 ### Running the project
 
