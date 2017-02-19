@@ -207,6 +207,9 @@ function clickLike(e) {
   xhr.send();
 }
 
+/**
+ * Attach event listeners buttons.
+ */
 (function() {
   let delLinks = document.querySelectorAll('.delete-comment');
   for (let i = 0; i < delLinks.length; i++) {
