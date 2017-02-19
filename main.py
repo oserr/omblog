@@ -4,26 +4,26 @@ Creates the app and defines its routes.
 """
 import collections
 import webapp2
-import lib.handlers
+from lib import handlers as hdl
 
 handlers = [
-    (r'/', handlers.MainHandler),
-    (r'/login', handlers.LoginHandler),
-    (r'/do-login', handlers.DoLoginHandler),
-    (r'/register', handlers.RegisterHandler),
-    (r'/do-register', handlers.DoRegisterHandler),
-    (r'/signout', handlers.SignoutHandler),
-    (r'/create-blog', handlers.CreateBlogHandler),
-    (r'/blog-form', handlers.BlogFormHandler),
-    (r'/blog/(\S+)', handlers.ViewBlogHandler),
-    (r'/create-comment/(\S+)', handlers.CreateCommentHandler),
-    (r'/edit-comment', handlers.EditCommentHandler),
-    (r'/delete-comment', handlers.DeleteCommentHandler),
-    (r'/like/(\S+)', handlers.LikeBlogHandler),
-    (r'/edit-blog/(\S+)', handlers.EditBlogHandler),
-    (r'/save-blog/(\S+)', handlers.SaveBlogHandler),
-    (r'/delete-blog/(\S+)', handlers.DeleteBlogHandler)
+    (r'/', hdl.MainHandler),
+    (r'/login', hdl.LoginHandler),
+    (r'/do-login', hdl.DoLoginHandler),
+    (r'/register', hdl.RegisterHandler),
+    (r'/do-register', hdl.DoRegisterHandler),
+    (r'/signout', hdl.SignoutHandler),
+    (r'/create-blog', hdl.CreateBlogHandler),
+    (r'/blog-form', hdl.BlogFormHandler),
+    (r'/blog/(\S+)', hdl.ViewBlogHandler),
+    (r'/create-comment/(\S+)', hdl.CreateCommentHandler),
+    (r'/edit-comment', hdl.EditCommentHandler),
+    (r'/delete-comment', hdl.DeleteCommentHandler),
+    (r'/like/(\S+)', hdl.LikeBlogHandler),
+    (r'/edit-blog/(\S+)', hdl.EditBlogHandler),
+    (r'/save-blog/(\S+)', hdl.SaveBlogHandler),
+    (r'/delete-blog/(\S+)', hdl.DeleteBlogHandler)
 ]
 app = webapp2.WSGIApplication(handlers, debug=True)
-app.registry['template_eng'] = handlers.create_template_engine('templates')
+app.registry['template_eng'] = hdl.create_template_engine('templates')
 app.registry['deleted_blogs'] = collections.deque()
