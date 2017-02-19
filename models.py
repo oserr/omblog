@@ -13,7 +13,7 @@ def check_str_not_empty(prop, content):
         The blog content.
     """
     if not content.strip():
-        raise datastore_erros.BadValueError
+        raise datastore_errors.BadValueError
     return content
 
 
