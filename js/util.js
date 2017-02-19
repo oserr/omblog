@@ -1,7 +1,8 @@
 /* Helper function to add an event listener.
- * @param el The element we want to add an event listener to.
- * @param event The event we want to listen to.
- * @param callback The callback function to call when the event is transmitted.
+ * @param {Element} el - The element we want to add an event listener to.
+ * @param {Event} event - The event we want to listen to.
+ * @param {function} callback - The callback function to call when the event is
+ * transmitted.
  */
 function addEvent(el, event, callback) {
   if ('addEventListener' in el) {
