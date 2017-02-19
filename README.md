@@ -18,8 +18,8 @@ or absolutley.
 * There are many places where app can be improved, e.g.:
   * Error handling.
   * Login redirection. Example: when users try to like a blog post without being
-  signed in, they are redirected to sign in, however, they are not redirected to
-  page they were viewing after signing in.
+  signed in, they are redirected to sign in, however, they are not redirected
+  back to where they were before the first redirection.
 
 [1]: https://cloud.google.com/sdk/downloads
 [2]: https://cloud.google.com/appengine/docs/python/console/
