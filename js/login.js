@@ -1,6 +1,8 @@
+// Adds event listners for warning messages tied to username/password inputs.
 clearWarningOnInput('inputUsername', 'warning-msg-user-login');
 clearWarningOnInput('inputPassword', 'warning-msg-pwd-login');
 
+// Sends login request to server.
 (function doLogin() {
   var form = document.getElementById('account-form');
   addEvent(form, 'submit', function(e) {
