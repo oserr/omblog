@@ -6,7 +6,7 @@
 environment. Installation instructions can be found [here][1].
 * After installation and the `PATH` environment is configured correctly, the
 project can be tested in local environment by running `dev_appserver.py path`,
-where _path_ is the location of this project. If running from root folter,
-_path_ is `.`.
+where _path_ is the location of this project and it can be specified relatively
+or absolutley.
 
 [1]: https://cloud.google.com/sdk/downloads
