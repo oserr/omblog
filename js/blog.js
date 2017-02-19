@@ -60,8 +60,12 @@ function tryEditComment(e) {
   form.focus();
 }
 
-// Removes the form to edit a comment, the old comment, and adds the modified
-// comment.
+/**
+ * Removes the form to edit a comment, and replaces the old comment Node with a
+ * new one.
+ * @param {object} data - A plain json object with the comment ID and the new
+ * html in plain text.
+ */
 function refreshComment(data) {
   let form = document.getElementById(data.id + '-edit');
   let oldComment = form.previousElementSibling;
