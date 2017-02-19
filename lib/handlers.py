@@ -262,11 +262,6 @@ class DoRegisterHandler(BaseHandler):
             data['success'] = False
             return self.json_write(data)
 
-        # Validate password
-        if not util.process_password(pwd):
-            data['success'] = False
-            return self.json_write(data)
-
         # Create account
         salt = util.gensalt()
         hsh = util.get_hash(salt, pwd)
