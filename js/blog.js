@@ -123,6 +123,11 @@ function editComment(e) {
   xhr.send(msg);
 }
 
+/**
+ * Sends request to a server to delete a comment, and removes the comment from
+ * the blog page.
+ * @param {Event} e - An event to delete a comment.
+ */
 function deleteComment(e) {
   e.preventDefault();
   let xhr = new XMLHttpRequest();
