@@ -10,5 +10,7 @@ environment. Installation instructions can be found [here][1].
 project can be tested in local environment by running `dev_appserver.py path`,
 where _path_ is the location of this project and it can be specified relatively
 or absolutley.
+* To run application in Google App Engine, follow the instructions [here][2].
 
 [1]: https://cloud.google.com/sdk/downloads
+[2]: https://cloud.google.com/appengine/docs/python/console/
