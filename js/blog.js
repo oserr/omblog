@@ -3,7 +3,7 @@
  * it.
  * @param {string} action - The action for the post form.
  * @param {string} value - The value of the button.
- * @return An input DOM element.
+ * @return {Node} An input DOM element.
  */
 function createInputSubmit(action, value) {
   let input = document.createElement('input');
@@ -17,6 +17,11 @@ function createInputSubmit(action, value) {
   return input;
 }
 
+/**
+ * Creates a form with a textarea for users to edit a comment.
+ * @param {Node} commentNode - A node containing a comment.
+ * @return {Node} A DOM form node.
+ */
 function createCommentForm(commentNode) {
   let form = document.createElement('form');
   form.id = commentNode.id + '-edit';
