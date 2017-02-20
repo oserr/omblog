@@ -282,10 +282,12 @@ class CreateCommentHandler(BaseHandler):
 
     def post(self, urlkey):
         """Stores comment in the DB."""
-        key = ndb.Key(urlsafe=urlkey)
+        blog = ndb.Key(urlsafe=urlkey).get()
+        if not blog:
+            return self.error(404)
         text = self.json_read()['text']
         text = util.squeeze(text.strip(), string.whitespace)
-        comment = models.BlogComment(blog=key, user=self.user, comment=text)
+        comment = models.BlogComment(blog=blog.key, user=self.user, comment=text)
         try:
             comment.put()
         except ndb.TransactionFailedError:
