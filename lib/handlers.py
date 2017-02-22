@@ -345,6 +345,8 @@ class EditBlogHandler(BaseHandler):
     def get(self, urlkey):
         """Renders the form to edit a blog entry."""
         blog = ndb.Key(urlsafe=urlkey).get()
+        if not blog:
+            return self.error(404)
         context = {
             'action': 'save-blog',
             'entry_id': blog.key.urlsafe(),
