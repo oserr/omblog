@@ -336,6 +336,8 @@ class BlogFormHandler(BaseHandler):
 
     def get(self):
         """Render the form to create a blog entry."""
+        if not self.is_session:
+            return self.redirect('/login')
         return self.render({'action': 'create-blog'}, 'blog-form.html')
 
 
@@ -344,6 +346,8 @@ class EditBlogHandler(BaseHandler):
 
     def get(self, urlkey):
         """Renders the form to edit a blog entry."""
+        if not self.is_session:
+            return self.redirect('/login')
         blog = ndb.Key(urlsafe=urlkey).get()
         if not blog:
             return self.error(404)
