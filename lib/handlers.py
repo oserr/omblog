@@ -464,8 +464,12 @@ class EditCommentHandler(BaseHandler):
 
     def post(self):
         """Saves or deletes the comment and redirects to blog post."""
+        if not self.is_session:
+            return self.redirect('/login')
         data = self.json_read()
         comment = ndb.Key(urlsafe=data['id']).get()
+        if not comment:
+            return self.error(404)
         comment.comment = data['text'].strip()
         try:
             comment.put()
