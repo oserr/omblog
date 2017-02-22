@@ -424,6 +424,8 @@ class ViewBlogHandler(BaseHandler):
             The blog key in url safe format.
         """
         blog = ndb.Key(urlsafe=urlkey).get()
+        if not blog:
+            return self.error(404)
         q = models.BlogComment.query(models.BlogComment.blog == blog.key)
         comments = q.order(models.BlogComment.date).fetch()
         context = self.get_context(blog, self.is_session, comments)
@@ -431,7 +433,7 @@ class ViewBlogHandler(BaseHandler):
         if self.is_session:
             context['user'] = self.user
             account = models.Account.get_by_id(self.user)
-            if account.key in blog.likes:
+            if account and account.key in blog.likes:
                 context['heart'] = 'red-heart'
         return self.render(context, 'blog.html')
 
