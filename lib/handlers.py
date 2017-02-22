@@ -513,6 +513,8 @@ class LikeBlogHandler(BaseHandler):
             return self.redirect('/login')
         account = models.Account.get_by_id(self.user)
         blog = ndb.Key(urlsafe=urlkey).get()
+        if not account or not blog:
+            return self.error(404)
         data = {'add': False, 'remove': False}
         # Don't allow users to like their own blogs
         if blog.is_author(self.user):
