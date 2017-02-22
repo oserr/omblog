@@ -395,7 +395,11 @@ class DeleteBlogHandler(BaseHandler):
         :param urlkey
             The blog key in url safe format.
         """
+        if not self.is_session:
+            return self.redirect('/login')
         blog = ndb.Key(urlsafe=urlkey).get()
+        if not blog:
+            return self.error(404)
         query = models.BlogComment.query(models.BlogComment.blog == blog.key)
         comment_keys = [comment.key for comment in query.fetch()]
         try:
