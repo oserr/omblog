@@ -282,6 +282,8 @@ class CreateCommentHandler(BaseHandler):
 
     def post(self, urlkey):
         """Stores comment in the DB."""
+        if not self.is_session:
+            return self.redirect('/login')
         blog = ndb.Key(urlsafe=urlkey).get()
         if not blog:
             return self.error(404)
