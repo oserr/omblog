@@ -369,7 +369,11 @@ class SaveBlogHandler(BaseHandler):
         :param urlkey
             The blog key in url safe format.
         """
+        if not self.is_session:
+            return self.redirect('/login')
         blog = ndb.Key(urlsafe=urlkey).get()
+        if not blog:
+            return self.error(404)
         blog.title = self.request.get('title').strip()
         blog.text = self.request.get('text').strip()
         # TODO: might be a good idea to add a last edited field to blog model
