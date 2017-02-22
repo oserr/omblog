@@ -487,9 +487,13 @@ class DeleteCommentHandler(BaseHandler):
 
     def post(self):
         """Deletes a comment from the DB and responds to request."""
+        if not self.is_session:
+            return self.redirect('/login')
         data = self.json_read()
         comment_id = data['id']
         comment = ndb.Key(urlsafe=comment_id).get()
+        if not comment:
+            return self.error(404)
         data['id'] = None
         try:
             comment.key.delete()
