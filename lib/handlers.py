@@ -315,7 +315,8 @@ class CreateBlogHandler(BaseHandler):
 
     def post(self):
         """Handles a post request to create a blog entry."""
-        # TODO: verify request is made in session context
+        if not self.is_session:
+            return self.redirect('/login')
         title = self.request.get('title').strip()
         title = util.squeeze(title, string.whitespace)
         text = self.request.get('text').strip()
