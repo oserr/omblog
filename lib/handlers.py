@@ -26,6 +26,7 @@ import os
 import hmac
 import json
 import string
+import functools
 
 import jinja2
 import webapp2
@@ -33,6 +34,19 @@ from google.appengine.ext import ndb
 
 import util
 import models
+
+def check_session(func):
+    """Defines a decorator function that redirects to the login page if
+    request is not a session request, i.e., user is not logged in.
+    """
+    @functools.wraps(func)
+    def session_wrapper(self, urlkey=None):
+        if not self.is_session:
+            return self.redirect('/login')
+        if not urlkey:
+            return func(self)
+        return func(self, urlkey)
+    return session_wrapper
 
 def create_template_engine(path=None):
     """Creats the template engine.
