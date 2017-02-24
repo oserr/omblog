@@ -492,10 +492,9 @@ class EditCommentHandler(BaseHandler):
 class DeleteCommentHandler(BaseHandler):
     """Responds to a request to delete a comment in a blog."""
 
+    @check_session
     def post(self):
         """Deletes a comment from the DB and responds to request."""
-        if not self.is_session:
-            return self.redirect('/login')
         data = self.json_read()
         comment_id = data['id']
         comment = ndb.Key(urlsafe=comment_id).get()
