@@ -355,10 +355,9 @@ class BlogFormHandler(BaseHandler):
 class EditBlogHandler(BaseHandler):
     """Handles a request to edit a blog entry."""
 
+    @check_session
     def get(self, urlkey):
         """Renders the form to edit a blog entry."""
-        if not self.is_session:
-            return self.redirect('/login')
         blog = ndb.Key(urlsafe=urlkey).get()
         if not blog:
             return self.error(404)
