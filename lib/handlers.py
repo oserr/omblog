@@ -326,10 +326,9 @@ class SignoutHandler(BaseHandler):
 class CreateBlogHandler(BaseHandler):
     """Handle requests to create a brand new blog entry."""
 
+    @check_session
     def post(self):
         """Handles a post request to create a blog entry."""
-        if not self.is_session:
-            return self.redirect('/login')
         title = self.request.get('title').strip()
         title = util.squeeze(title, string.whitespace)
         text = self.request.get('text').strip()
