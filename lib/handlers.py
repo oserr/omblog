@@ -294,10 +294,9 @@ class DoRegisterHandler(BaseHandler):
 class CreateCommentHandler(BaseHandler):
     """Handle requests to create a comment on a blog."""
 
+    @check_session
     def post(self, urlkey):
         """Stores comment in the DB."""
-        if not self.is_session:
-            return self.redirect('/login')
         blog = ndb.Key(urlsafe=urlkey).get()
         if not blog:
             return self.error(404)
