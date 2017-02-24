@@ -470,10 +470,9 @@ class ViewBlogHandler(BaseHandler):
 class EditCommentHandler(BaseHandler):
     """Handles the request to edit a blog comment."""
 
+    @check_session
     def post(self):
         """Saves or deletes the comment and redirects to blog post."""
-        if not self.is_session:
-            return self.redirect('/login')
         data = self.json_read()
         comment = ndb.Key(urlsafe=data['id']).get()
         if not comment:
