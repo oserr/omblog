@@ -346,10 +346,9 @@ class CreateBlogHandler(BaseHandler):
 class BlogFormHandler(BaseHandler):
     """Handles request initial request to create a blog entry."""
 
+    @check_session
     def get(self):
         """Render the form to create a blog entry."""
-        if not self.is_session:
-            return self.redirect('/login')
         return self.render({'action': 'create-blog'}, 'blog-form.html')
 
 
