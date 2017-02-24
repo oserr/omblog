@@ -87,13 +87,13 @@ class BaseHandler(webapp2.RequestHandler):
         """
         self.initialize(request, response)
         self.is_session = False
-        self.account = None
+        self.acct = None
         user = self.request.cookies.get('name')
         hsh = self.request.cookies.get('secret')
         if user and hsh:
             account = models.Account.get_by_id(user)
             if account and account.pwd_hash == hsh:
-                self.account = account
+                self.acct = account
                 self.is_session = True
 
     def write(self, strval):
@@ -302,13 +302,13 @@ class CreateCommentHandler(BaseHandler):
             return self.error(404)
         text = self.json_read()['text']
         text = util.squeeze(text.strip(), string.whitespace)
-        comment = models.BlogComment(blog=blog.key, user=self.user, comment=text)
+        comment = models.BlogComment(blog=blog.key, user=self.acct.user, comment=text)
         try:
             comment.put()
         except ndb.TransactionFailedError:
             # TODO: handle error as internal server error
             pass
-        context = {'user': self.user, 'comment': comment}
+        context = {'user': self.acct.user, 'comment': comment}
         msg = self.render_str(context, 'comment.html')
         return self.json_write({'id': urlkey, 'comment': msg})
 
@@ -333,7 +333,7 @@ class CreateBlogHandler(BaseHandler):
         title = util.squeeze(title, string.whitespace)
         text = self.request.get('text').strip()
         text = util.squeeze(text, string.whitespace)
-        blog = models.Blog(user=self.user, title=title, text=text)
+        blog = models.Blog(user=self.acct.user, title=title, text=text)
         try:
             blog.put()
         except ndb.TransactionFailedError:
@@ -439,8 +439,8 @@ class ViewBlogHandler(BaseHandler):
         context = self.get_context(blog, self.is_session, comments)
         # check if user likes blog
         if self.is_session:
-            context['user'] = self.user
-            account = models.Account.get_by_id(self.user)
+            context['user'] = self.acct.user
+            account = models.Account.get_by_id(self.acct.user)
             if account and account.key in blog.likes:
                 context['heart'] = 'red-heart'
         return self.render(context, 'blog.html')
@@ -483,7 +483,7 @@ class EditCommentHandler(BaseHandler):
         except ndb.TransactionFailedError:
             # TODO: handle error as internal server error
             pass
-        context = {'user': self.user, 'comment': comment}
+        context = {'user': self.acct.user, 'comment': comment}
         msg = self.render_str(context, 'comment.html')
         data = {'id': data['id'], 'comment': msg}
         return self.json_write(data)
@@ -516,18 +516,17 @@ class LikeBlogHandler(BaseHandler):
     @check_session
     def get(self, urlkey):
         """Adds like if user is logged in."""
-        account = models.Account.get_by_id(self.user)
         blog = ndb.Key(urlsafe=urlkey).get()
-        if not account or not blog:
+        if not blog:
             return self.error(404)
         data = {'add': False, 'remove': False}
         # Don't allow users to like their own blogs
-        if blog.is_author(self.user):
+        if blog.is_author(self.acct.user):
             return self.json_write(data)
 
         # User is unliking
-        if account.key in blog.likes:
-            blog.likes.remove(account.key)
+        if self.acct.key in blog.likes:
+            blog.likes.remove(self.acct.key)
             try:
                 blog.put()
                 data['remove'] = True
@@ -537,7 +536,7 @@ class LikeBlogHandler(BaseHandler):
             return self.json_write(data)
 
         # User is liking
-        blog.likes.append(account.key)
+        blog.likes.append(self.acct.key)
         try:
             blog.put()
             data['add'] = True
