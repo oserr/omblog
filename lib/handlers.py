@@ -398,14 +398,13 @@ class SaveBlogHandler(BaseHandler):
 class DeleteBlogHandler(BaseHandler):
     """Handles a request to delete a blog entry."""
 
+    @check_session
     def get(self, urlkey):
         """Deletes a blog entry and redirects to the main page.
 
         :param urlkey
             The blog key in url safe format.
         """
-        if not self.is_session:
-            return self.redirect('/login')
         blog = ndb.Key(urlsafe=urlkey).get()
         if not blog:
             return self.error(404)
