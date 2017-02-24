@@ -48,6 +48,9 @@ def check_session(func):
         return func(self, urlkey)
     return session_wrapper
 
+# TODO: create wrapper that checks resource, i.e., blog or comment
+# TODO: create wrapper that checks ownership of resource
+
 def create_template_engine(path=None):
     """Creats the template engine.
 
