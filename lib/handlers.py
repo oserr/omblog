@@ -77,8 +77,8 @@ class BaseHandler(webapp2.RequestHandler):
     """A wrapper to make request handlers less verbose to use."""
 
     def __init__(self, request, response):
-        """Overrides initialization of request and response objects to get user
-        name, and initializes session info with user name.
+        """Overrides initialization of request and response objects to get
+        account info, and initializes session info with user name.
 
         :param request
             The request object
@@ -87,13 +87,13 @@ class BaseHandler(webapp2.RequestHandler):
         """
         self.initialize(request, response)
         self.is_session = False
-        self.user = None
+        self.account = None
         user = self.request.cookies.get('name')
         hsh = self.request.cookies.get('secret')
         if user and hsh:
             account = models.Account.get_by_id(user)
             if account and account.pwd_hash == hsh:
-                self.user = user
+                self.account = account
                 self.is_session = True
 
     def write(self, strval):
