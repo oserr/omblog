@@ -513,10 +513,9 @@ class DeleteCommentHandler(BaseHandler):
 class LikeBlogHandler(BaseHandler):
     """Responds to a request to like a blog entry."""
 
+    @check_session
     def get(self, urlkey):
         """Adds like if user is logged in."""
-        if not self.is_session:
-            return self.redirect('/login')
         account = models.Account.get_by_id(self.user)
         blog = ndb.Key(urlsafe=urlkey).get()
         if not account or not blog:
