@@ -361,6 +361,8 @@ class EditBlogHandler(BaseHandler):
         blog = ndb.Key(urlsafe=urlkey).get()
         if not blog:
             return self.error(404)
+        if not blog.is_author(self.acct.user):
+            return self.redirect('/')
         context = {
             'action': 'save-blog',
             'entry_id': blog.key.urlsafe(),
@@ -383,6 +385,8 @@ class SaveBlogHandler(BaseHandler):
         blog = ndb.Key(urlsafe=urlkey).get()
         if not blog:
             return self.error(404)
+        if not blog.is_author(self.acct.user):
+            return self.redirect('/')
         blog.title = self.request.get('title').strip()
         blog.text = self.request.get('text').strip()
         # TODO: might be a good idea to add a last edited field to blog model
