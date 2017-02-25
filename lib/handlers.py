@@ -132,7 +132,7 @@ class BaseHandler(webapp2.RequestHandler):
         user_name = self.request.cookies.get('name')
         hsh = self.request.cookies.get('secret')
         if user_name and hsh:
-            user = models.User.get_by_id(user_name)
+            user = User.get_by_id(user_name)
             if user and user.pwd_hash == hsh:
                 self.user = user
 
@@ -210,7 +210,7 @@ class MainHandler(BaseHandler):
         blogs that have very recently been deleted but perhaps not reflected
         in this snapshot of blog entries.
         """
-        blogs = models.Blog.query().order(-models.Blog.date).fetch()
+        blogs = Blog.query().order(-Blog.date).fetch()
         deleted_blogs = self.app.registry.get('deleted_blogs')
         while len(deleted_blogs):
             blog = deleted_blogs.pop()
@@ -258,7 +258,7 @@ class DoLoginHandler(BaseHandler):
         pwd = data['password']
 
         # verify account exists
-        user = models.User.get_by_id(user_name)
+        user = User.get_by_id(user_name)
         if not user:
             data['baduser'] = True
             return self.json_write(data)
@@ -315,7 +315,7 @@ class DoRegisterHandler(BaseHandler):
         pwd = data['password']
 
         # Check that username doesn't already exist
-        user = models.User.get_by_id(user_name)
+        user = User.get_by_id(user_name)
         if user:
             data['success'] = False
             return self.json_write(data)
@@ -323,7 +323,7 @@ class DoRegisterHandler(BaseHandler):
         # Create account
         salt = util.gensalt()
         hsh = util.get_hash(salt, pwd)
-        user = models.User(id=user_name, salt=salt, pwd_hash=hsh)
+        user = User(id=user_name, salt=salt, pwd_hash=hsh)
         try:
             user.put()
         except ndb.TransactionFailedError:
@@ -346,7 +346,7 @@ class CreateCommentHandler(BaseHandler):
         blog = self.db_resource
         text = self.json_read()['text']
         text = util.squeeze(text.strip(), string.whitespace)
-        comment = models.Comment(blog=blog.key, user=self.user.key, text=text)
+        comment = Comment(blog=blog.key, user=self.user.key, text=text)
         try:
             comment.put()
         except ndb.TransactionFailedError:
@@ -377,7 +377,7 @@ class CreateBlogHandler(BaseHandler):
         title = util.squeeze(title, string.whitespace)
         text = self.request.get('text').strip()
         text = util.squeeze(text, string.whitespace)
-        blog = models.Blog(user=self.user.key, title=title, text=text)
+        blog = Blog(user=self.user.key, title=title, text=text)
         try:
             blog.put()
         except ndb.TransactionFailedError:
@@ -452,7 +452,7 @@ class DeleteBlogHandler(BaseHandler):
             The blog key in url safe format.
         """
         blog = self.db_resource
-        query = models.Comment.query(models.Comment.blog == blog.key)
+        query = Comment.query(Comment.blog == blog.key)
         comment_keys = [comment.key for comment in query.fetch()]
         try:
             blog.key.delete()
@@ -477,7 +477,6 @@ class ViewBlogHandler(BaseHandler):
             The blog key in url safe format.
         """
         blog = self.db_resource
-        Comment = models.Comment
         comments = Comment.query(
             Comment.blog == blog.key).order(Comment.date).fetch()
         context = self.get_context(blog, self.is_session, comments)
