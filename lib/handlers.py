@@ -402,11 +402,12 @@ class EditBlogHandler(BaseHandler):
     @check_ownership
     def get(self, urlkey):
         """Renders the form to edit a blog entry."""
+        blog = self.db_resource
         context = {
             'action': 'save-blog',
-            'entry_id': self.db_resource.key.urlsafe(),
-            'title_value': self.db_resource.title,
-            'text_value': self.db_resource.text
+            'entry_id': blog.key.urlsafe(),
+            'title_value': blog.title,
+            'text_value': blog.text
         }
         return self.render(context, 'blog-form.html')
 
