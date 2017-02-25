@@ -375,7 +375,7 @@ class CreateBlogHandler(BaseHandler):
         title = util.squeeze(title, string.whitespace)
         text = self.request.get('text').strip()
         text = util.squeeze(text, string.whitespace)
-        blog = models.Blog(user=self.user, title=title, text=text)
+        blog = models.Blog(user=self.user.key, title=title, text=text)
         try:
             blog.put()
         except ndb.TransactionFailedError:
