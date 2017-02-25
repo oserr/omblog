@@ -42,9 +42,10 @@ def check_session(func):
     @functools.wraps(func)
     def session_wrapper(*args):
         if not args:
-            return self.error(404)
-        if not args[0].is_session:
-            return self.redirect('/login')
+            raise ValueError('Handler object not found')
+        handler = args[0]
+        if not handler.is_session:
+            return handler.redirect('/login')
         return func(args)
     return session_wrapper
 
@@ -58,13 +59,11 @@ def check_resource(func):
     @functools.wraps(func)
     def wrapper(*args):
         if len(args) < 2:
-            return self.error(404)
+            raise ValueError('Handler object not found')
         handler, urlkey = args[0], args[1]
-        if not handler or not urlkey:
-            return self.error(404)
         handler.db_resource = ndb.Key(urlsafe=urlkey).get()
         if not handler.db_resource:
-            raise self.error(404)
+            return handler.error(404)
         return func(args)
     return wrapper
 
@@ -78,10 +77,10 @@ def check_ownership(func):
     @functools.wraps(func)
     def wrapper(*args):
         if not args:
-            raise ValueError("Missing handler object")
+            raise ValueError('Handler object not found')
         handler = args[0]
         if not handler.db_resource.is_author(handler.acct.user):
-            return self.redirect('/')
+            return handler.redirect('/')
         return func(args)
     return wrapper
 
