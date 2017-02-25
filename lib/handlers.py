@@ -82,7 +82,7 @@ def check_ownership(func):
         if not args:
             raise ValueError('Handler object not found')
         handler = args[0]
-        if not handler.db_resource.is_author(handler.user):
+        if not handler.db_resource.is_author(handler.user.key):
             return handler.redirect('/')
         return func(*args)
     return wrapper
