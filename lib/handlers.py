@@ -515,15 +515,15 @@ class EditCommentHandler(BaseHandler):
         comment = ndb.Key(urlsafe=data['id']).get()
         if not comment:
             return self.error(404)
-        if not comment.is_author(self.user):
+        if not comment.is_author(self.user.key):
             return self.redirect('/')
-        comment.comment = data['text'].strip()
+        comment.text = data['text'].strip()
         try:
             comment.put()
         except ndb.TransactionFailedError:
             # TODO: handle error as internal server error
             pass
-        context = {'user': self.user, 'comment': comment}
+        context = {'user': self.user.key.id(), 'comment': comment}
         msg = self.render_str(context, 'comment.html')
         data = {'id': data['id'], 'comment': msg}
         return self.json_write(data)
