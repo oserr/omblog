@@ -22,7 +22,7 @@
       <div class="col-md-8 col-centered">
         <h1 class="article-title">{{ blog.title }}</h1>
         <time class="article-date" datetime="{{ blog.date }}">
-          Posted {{ blog.date.strftime('%d %B %Y') }} by {{ blog.user.key.id() }}
+          Posted {{ blog.date.strftime('%d %B %Y') }} by {{ blog.user.id() }}
       </div>
     </header>
     <article class="row article-content col-centered">

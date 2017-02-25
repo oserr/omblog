@@ -1,7 +1,7 @@
 <div class="row" id="{{ comment.key.urlsafe() }}">
   <div class="col-md-8 col-centered">
     <time class="comment-date" datetime="{{ comment.date }}">
-      <b>{{ comment.user.key.id() }}</b> &bull; <small>{{ comment.get_timedelta() }}</small>
+      <b>{{ comment.user.id() }}</b> &bull; <small>{{ comment.get_timedelta() }}</small>
     </time>
     <p>{{ comment.text }}</p>
     {% if comment.is_author(user_key) %}
