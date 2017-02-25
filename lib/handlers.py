@@ -559,15 +559,17 @@ class LikeBlogHandler(BaseHandler):
     @check_resource
     def get(self, urlkey):
         data = {'add': False, 'remove': False}
+        blog = self.db_resource
+
         # Don't allow users to like their own blogs
-        if self.db_resource.is_author(self.user):
+        if blog.is_author(self.user.key):
             return self.json_write(data)
 
         # User is unliking
-        if self.acct.key in self.db_resource.likes:
-            self.db_resource.likes.remove(self.acct.key)
+        if self.user.key in blog.likes:
+            blog.likes.remove(self.user.key)
             try:
-                self.db_resource.put()
+                blog.put()
                 data['remove'] = True
             except ndb.TransactionFailedError:
                 # TODO: handle error as internal server error
@@ -575,9 +577,9 @@ class LikeBlogHandler(BaseHandler):
             return self.json_write(data)
 
         # User is liking
-        self.db_resource.likes.append(self.acct.key)
+        blog.likes.append(self.user.key)
         try:
-            self.db_resource.put()
+            blog.put()
             data['add'] = True
         except ndb.TransactionFailedError:
             # TODO: handle error as internal server error
