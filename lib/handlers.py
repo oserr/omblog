@@ -38,6 +38,9 @@ import models
 def check_session(func):
     """Defines a decorator function that redirects to the login page if
     request is not a session request, i.e., user is not logged in.
+
+    :param func
+        The callable object to wrap.
     """
     @functools.wraps(func)
     def session_wrapper(*args):
@@ -332,14 +335,13 @@ class CreateCommentHandler(BaseHandler):
     """Handle requests to create a comment on a blog."""
 
     @check_session
+    @check_resource
     def post(self, urlkey):
         """Stores comment in the DB."""
-        blog = ndb.Key(urlsafe=urlkey).get()
-        if not blog:
-            return self.error(404)
         text = self.json_read()['text']
         text = util.squeeze(text.strip(), string.whitespace)
-        comment = models.BlogComment(blog=blog.key, user=self.acct.user, comment=text)
+        comment = models.BlogComment(
+            blog=self.db_resource.key, user=self.acct.user, comment=text)
         try:
             comment.put()
         except ndb.TransactionFailedError:
@@ -393,18 +395,15 @@ class EditBlogHandler(BaseHandler):
     """Handles a request to edit a blog entry."""
 
     @check_session
+    @check_resource
+    @check_ownership
     def get(self, urlkey):
         """Renders the form to edit a blog entry."""
-        blog = ndb.Key(urlsafe=urlkey).get()
-        if not blog:
-            return self.error(404)
-        if not blog.is_author(self.acct.user):
-            return self.redirect('/')
         context = {
             'action': 'save-blog',
-            'entry_id': blog.key.urlsafe(),
-            'title_value': blog.title,
-            'text_value': blog.text
+            'entry_id': self.db_resource.key.urlsafe(),
+            'title_value': self.db_resource.title,
+            'text_value': self.db_resource.text
         }
         return self.render(context, 'blog-form.html')
 
@@ -413,22 +412,19 @@ class SaveBlogHandler(BaseHandler):
     """Handles a request to save a blog after an edit."""
 
     @check_session
+    @check_resource
+    @check_ownership
     def post(self, urlkey):
         """Saves a blog after it is edited.
 
         :param urlkey
             The blog key in url safe format.
         """
-        blog = ndb.Key(urlsafe=urlkey).get()
-        if not blog:
-            return self.error(404)
-        if not blog.is_author(self.acct.user):
-            return self.redirect('/')
-        blog.title = self.request.get('title').strip()
-        blog.text = self.request.get('text').strip()
+        self.db_resource.title = self.request.get('title').strip()
+        self.db_resource.text = self.request.get('text').strip()
         # TODO: might be a good idea to add a last edited field to blog model
         try:
-            blog.put()
+            self.db_resource.put()
         except ndb.TransactionFailedError:
             # TODO: handle error as internal server error
             pass
@@ -440,19 +436,19 @@ class DeleteBlogHandler(BaseHandler):
     """Handles a request to delete a blog entry."""
 
     @check_session
+    @check_resource
+    @check_ownership
     def get(self, urlkey):
         """Deletes a blog entry and redirects to the main page.
 
         :param urlkey
             The blog key in url safe format.
         """
-        blog = ndb.Key(urlsafe=urlkey).get()
-        if not blog:
-            return self.error(404)
-        query = models.BlogComment.query(models.BlogComment.blog == blog.key)
+        query = models.BlogComment.query(
+            models.BlogComment.blog == self.db_resource.key)
         comment_keys = [comment.key for comment in query.fetch()]
         try:
-            blog.key.delete()
+            self.db_resource.key.delete()
             ndb.delete_multi(comment_keys)
         except ndb.TransactionFailedError:
             # TODO: handle error as internal server error
@@ -466,23 +462,21 @@ class DeleteBlogHandler(BaseHandler):
 class ViewBlogHandler(BaseHandler):
     """Handlers requests to view a blog entry."""
 
+    @check_resource
     def get(self, urlkey):
         """Renders a blog entry.
 
         :param urlkey
             The blog key in url safe format.
         """
-        blog = ndb.Key(urlsafe=urlkey).get()
-        if not blog:
-            return self.error(404)
-        q = models.BlogComment.query(models.BlogComment.blog == blog.key)
+        q = models.BlogComment.query(
+            models.BlogComment.blog == self.db_resource.key)
         comments = q.order(models.BlogComment.date).fetch()
-        context = self.get_context(blog, self.is_session, comments)
+        context = self.get_context(self.db_resource, self.is_session, comments)
         # check if user likes blog
         if self.is_session:
             context['user'] = self.acct.user
-            account = models.Account.get_by_id(self.acct.user)
-            if account and account.key in blog.likes:
+            if self.acct.key in self.db_resource.likes:
                 context['heart'] = 'red-heart'
         return self.render(context, 'blog.html')
 
@@ -512,19 +506,18 @@ class EditCommentHandler(BaseHandler):
     """Handles the request to edit a blog comment."""
 
     @check_session
+    @check_resource
+    @check_ownership
     def post(self):
         """Saves or deletes the comment and redirects to blog post."""
         data = self.json_read()
-        comment = ndb.Key(urlsafe=data['id']).get()
-        if not comment:
-            return self.error(404)
-        comment.comment = data['text'].strip()
+        self.db_resource.comment = data['text'].strip()
         try:
-            comment.put()
+            self.db_resource.put()
         except ndb.TransactionFailedError:
             # TODO: handle error as internal server error
             pass
-        context = {'user': self.acct.user, 'comment': comment}
+        context = {'user': self.acct.user, 'comment': self.db_resource}
         msg = self.render_str(context, 'comment.html')
         data = {'id': data['id'], 'comment': msg}
         return self.json_write(data)
@@ -555,21 +548,18 @@ class LikeBlogHandler(BaseHandler):
     """Responds to a request to like a blog entry."""
 
     @check_session
+    @check_resource
     def get(self, urlkey):
-        """Adds like if user is logged in."""
-        blog = ndb.Key(urlsafe=urlkey).get()
-        if not blog:
-            return self.error(404)
         data = {'add': False, 'remove': False}
         # Don't allow users to like their own blogs
-        if blog.is_author(self.acct.user):
+        if self.db_resource.is_author(self.acct.user):
             return self.json_write(data)
 
         # User is unliking
-        if self.acct.key in blog.likes:
-            blog.likes.remove(self.acct.key)
+        if self.acct.key in self.db_resource.likes:
+            self.db_resource.likes.remove(self.acct.key)
             try:
-                blog.put()
+                self.db_resource.put()
                 data['remove'] = True
             except ndb.TransactionFailedError:
                 # TODO: handle error as internal server error
@@ -577,9 +567,9 @@ class LikeBlogHandler(BaseHandler):
             return self.json_write(data)
 
         # User is liking
-        blog.likes.append(self.acct.key)
+        self.db_resource.likes.append(self.acct.key)
         try:
-            blog.put()
+            self.db_resource.put()
             data['add'] = True
         except ndb.TransactionFailedError:
             # TODO: handle error as internal server error
