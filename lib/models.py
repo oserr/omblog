@@ -56,11 +56,7 @@ class Blog(ndb.Model):
     likes = ndb.KeyProperty(kind=User, repeated=True)
 
     def is_author(self, user):
-        """Returns true if user is the author of this blog.
-
-        :param user
-            A user of the blog site.
-        """
+        """Returns true if user is the author of this blog."""
         return self.user == user
 
     @property
