@@ -341,16 +341,16 @@ class CreateCommentHandler(BaseHandler):
     @check_resource
     def post(self, urlkey):
         """Stores comment in the DB."""
+        blog = self.db_resource
         text = self.json_read()['text']
         text = util.squeeze(text.strip(), string.whitespace)
-        comment = models.BlogComment(
-            blog=self.db_resource.key, user=self.user, comment=text)
+        comment = models.Comment(blog=blog.key, user=self.user.key, text=text)
         try:
             comment.put()
         except ndb.TransactionFailedError:
             # TODO: handle error as internal server error
             pass
-        context = {'user': self.user, 'comment': comment}
+        context = {'user': self.user.key.id(), 'comment': comment}
         msg = self.render_str(context, 'comment.html')
         return self.json_write({'id': urlkey, 'comment': msg})
 
