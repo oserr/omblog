@@ -450,7 +450,7 @@ class DeleteBlogHandler(BaseHandler):
             The blog key in url safe format.
         """
         blog = self.db_resource
-        query = models.BlogComment.query(models.BlogComment.blog == blog.key)
+        query = models.Comment.query(models.Comment.blog == blog.key)
         comment_keys = [comment.key for comment in query.fetch()]
         try:
             blog.key.delete()
