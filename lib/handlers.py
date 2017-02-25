@@ -33,7 +33,9 @@ import webapp2
 from google.appengine.ext import ndb
 
 import util
-import models
+from models import User
+from models import Blog
+from models import Comment
 
 def check_session(func):
     """Defines a decorator function that redirects to the login page if
