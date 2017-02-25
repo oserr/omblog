@@ -256,20 +256,20 @@ class DoLoginHandler(BaseHandler):
         pwd = data['password']
 
         # verify account exists
-        account = models.Account.get_by_id(user)
-        if not account:
+        user = models.User.get_by_id(user)
+        if not user:
             data['baduser'] = True
             return self.json_write(data)
 
         # verify password is correct
-        hsh = util.get_hash(account.salt, pwd)
-        if hsh != account.pwd_hash:
+        hsh = util.get_hash(user.salt, pwd)
+        if hsh != user.pwd_hash:
             data['badpwd'] = True
             return self.json_write(data)
 
         # set session cookies
         data['success'] = True
-        self.response.set_cookie('name', user)
+        self.response.set_cookie('name', user.key.id())
         self.response.set_cookie('secret', hsh)
         return self.json_write(data)
 
