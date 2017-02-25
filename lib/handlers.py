@@ -125,18 +125,14 @@ class BaseHandler(webapp2.RequestHandler):
             The response object
         """
         self.initialize(request, response)
-        self.is_session = False
-        self.acct = None
         self.user = None
         self.db_resource = None
         user = self.request.cookies.get('name')
         hsh = self.request.cookies.get('secret')
         if user and hsh:
-            account = models.Account.get_by_id(user)
-            if account and account.pwd_hash == hsh:
-                self.acct = account
+            user = models.User.get_by_id(user)
+            if user and user.pwd_hash == hsh:
                 self.user = user
-                self.is_session = True
 
     def write(self, strval):
         """Wrapper around self.response.out.write.
