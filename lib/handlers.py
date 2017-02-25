@@ -482,7 +482,7 @@ class ViewBlogHandler(BaseHandler):
         context = self.get_context(blog, self.is_session, comments)
         # check if user likes blog
         if self.is_session:
-            context['user'] = self.user.key.id()
+            context['user_key'] = self.user.key
             if self.user.key in blog.likes:
                 context['heart'] = 'red-heart'
         return self.render(context, 'blog.html')
@@ -505,7 +505,7 @@ class ViewBlogHandler(BaseHandler):
             'blog_id': blog.key.urlsafe(),
             'comments': comments,
             'heart': 'normal',
-            'user': user
+            'user_key': user
         }
 
 
