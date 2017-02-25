@@ -472,14 +472,14 @@ class ViewBlogHandler(BaseHandler):
         :param urlkey
             The blog key in url safe format.
         """
-        q = models.BlogComment.query(
-            models.BlogComment.blog == self.db_resource.key)
-        comments = q.order(models.BlogComment.date).fetch()
-        context = self.get_context(self.db_resource, self.is_session, comments)
+        blog = self.db_resource
+        comments = models.Comment.query(models.Comment.blog == blog.key).
+            order(models.Comment.date).fetch()
+        context = self.get_context(blog, self.is_session, comments)
         # check if user likes blog
         if self.is_session:
-            context['user'] = self.user
-            if self.acct.key in self.db_resource.likes:
+            context['user'] = self.user.key.id()
+            if self.user.key in blog.likes:
                 context['heart'] = 'red-heart'
         return self.render(context, 'blog.html')
 
