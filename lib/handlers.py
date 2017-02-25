@@ -56,13 +56,16 @@ def check_resource(func):
         The callable object to wrap.
     """
     @functools.wraps(func)
-    def wrapper(self, urlkey):
-        if not urlkey:
+    def wrapper(*args):
+        if len(args) < 2:
+            return self.error(404)
+        handler, urlkey = args[0], args[1]
+        if not handler or not urlkey:
+            return self.error(404)
+        handler.db_resource = ndb.Key(urlsafe=urlkey).get()
+        if not handler.db_resource:
             raise self.error(404)
-        self.db_resource = ndb.Key(urlsafe=urlkey).get()
-        if not self.db_resource:
-            raise self.error(404)
-        return func(self, urlkey)
+        return func(args)
     return wrapper
 
 def check_ownership(func):
