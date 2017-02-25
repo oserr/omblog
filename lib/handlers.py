@@ -527,7 +527,7 @@ class EditCommentHandler(BaseHandler):
         except ndb.TransactionFailedError:
             # TODO: handle error as internal server error
             pass
-        context = {'user': self.user.key.id(), 'comment': comment}
+        context = {'user_key': self.user.key, 'comment': comment}
         msg = self.render_str(context, 'comment.html')
         data = {'id': data['id'], 'comment': msg}
         return self.json_write(data)
