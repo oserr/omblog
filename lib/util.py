@@ -8,8 +8,6 @@ import random
 import re
 import string
 
-from models import Account
-
 def gensalt(length=16):
     """Generate a random salt value for a password.
 
