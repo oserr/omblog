@@ -127,10 +127,10 @@ class BaseHandler(webapp2.RequestHandler):
         self.initialize(request, response)
         self.user = None
         self.db_resource = None
-        user = self.request.cookies.get('name')
+        user_name = self.request.cookies.get('name')
         hsh = self.request.cookies.get('secret')
-        if user and hsh:
-            user = models.User.get_by_id(user)
+        if user_name and hsh:
+            user = models.User.get_by_id(user_name)
             if user and user.pwd_hash == hsh:
                 self.user = user
 
