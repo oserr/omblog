@@ -48,6 +48,23 @@ def check_session(func):
         return func(self, urlkey)
     return session_wrapper
 
+def check_resource(func):
+    """Defines a decorator function that enforces the existence of a database
+    resource.
+
+    :param func
+        The callable object to wrap.
+    """
+    @functools.wraps(func)
+    def wrapper(self, urlkey):
+        if not urlkey:
+            raise self.error(404)
+        self.db_resource = ndb.Key(urlsafe=urlkey).get()
+        if not self.db_resource:
+            raise self.error(404)
+        return func(self, urlkey)
+    return wrapper
+
 # TODO: create wrapper that checks resource, i.e., blog or comment
 # TODO: create wrapper that checks ownership of resource
 
