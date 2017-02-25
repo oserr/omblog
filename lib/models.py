@@ -55,13 +55,13 @@ class Blog(ndb.Model):
     text = ndb.TextProperty(required=True, validator=check_str_not_empty)
     likes = ndb.KeyProperty(kind=User, repeated=True)
 
-    def is_author(self, author):
-        """Returns true if author is the author of this blog.
+    def is_author(self, user):
+        """Returns true if user is the author of this blog.
 
-            Args:
-                author: A user name.
+        :param user
+            A user of the blog site.
         """
-        return self.user == author
+        return self.user == user
 
     @property
     def lines(self):
