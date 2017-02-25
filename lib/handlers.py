@@ -309,27 +309,27 @@ class DoRegisterHandler(BaseHandler):
             return self.redirect('/')
 
         data = self.json_read()
-        user = data['user']
+        user_name = data['user']
         pwd = data['password']
 
         # Check that username doesn't already exist
-        account = models.Account.get_by_id(user)
-        if account:
+        user = models.User.get_by_id(user_name)
+        if user:
             data['success'] = False
             return self.json_write(data)
 
         # Create account
         salt = util.gensalt()
         hsh = util.get_hash(salt, pwd)
-        account = models.Account(id=user, salt=salt, pwd_hash=hsh)
+        user = models.User(id=user_name, salt=salt, pwd_hash=hsh)
         try:
-            account.put()
+            user.put()
         except ndb.TransactionFailedError:
             data['success'] = False
             return self.json_write(data)
 
         data['success'] = True
-        self.response.set_cookie('name', user)
+        self.response.set_cookie('name', user_name)
         self.response.set_cookie('secret', hsh)
         return self.json_write(data)
 
