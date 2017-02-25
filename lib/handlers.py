@@ -252,11 +252,11 @@ class DoLoginHandler(BaseHandler):
 
         data = self.json_read()
         data['success'] = False
-        user = data['user']
+        user_name = data['user']
         pwd = data['password']
 
         # verify account exists
-        user = models.User.get_by_id(user)
+        user = models.User.get_by_id(user_name)
         if not user:
             data['baduser'] = True
             return self.json_write(data)
@@ -269,7 +269,7 @@ class DoLoginHandler(BaseHandler):
 
         # set session cookies
         data['success'] = True
-        self.response.set_cookie('name', user.key.id())
+        self.response.set_cookie('name', user_name)
         self.response.set_cookie('secret', hsh)
         return self.json_write(data)
 
