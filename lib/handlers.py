@@ -49,7 +49,7 @@ def check_session(func):
         handler = args[0]
         if not handler.is_session:
             return handler.redirect('/login')
-        return func(args)
+        return func(*args)
     return session_wrapper
 
 def check_resource(func):
@@ -67,7 +67,7 @@ def check_resource(func):
         handler.db_resource = ndb.Key(urlsafe=urlkey).get()
         if not handler.db_resource:
             return handler.error(404)
-        return func(args)
+        return func(*args)
     return wrapper
 
 def check_ownership(func):
@@ -82,9 +82,9 @@ def check_ownership(func):
         if not args:
             raise ValueError('Handler object not found')
         handler = args[0]
-        if not handler.db_resource.is_author(handler.acct.user):
+        if not handler.db_resource.is_author(handler.user):
             return handler.redirect('/')
-        return func(args)
+        return func(*args)
     return wrapper
 
 def create_template_engine(path=None):
@@ -127,6 +127,7 @@ class BaseHandler(webapp2.RequestHandler):
         self.initialize(request, response)
         self.is_session = False
         self.acct = None
+        self.user = None
         self.db_resource = None
         user = self.request.cookies.get('name')
         hsh = self.request.cookies.get('secret')
@@ -134,6 +135,7 @@ class BaseHandler(webapp2.RequestHandler):
             account = models.Account.get_by_id(user)
             if account and account.pwd_hash == hsh:
                 self.acct = account
+                self.user = user
                 self.is_session = True
 
     def write(self, strval):
@@ -341,13 +343,13 @@ class CreateCommentHandler(BaseHandler):
         text = self.json_read()['text']
         text = util.squeeze(text.strip(), string.whitespace)
         comment = models.BlogComment(
-            blog=self.db_resource.key, user=self.acct.user, comment=text)
+            blog=self.db_resource.key, user=self.user, comment=text)
         try:
             comment.put()
         except ndb.TransactionFailedError:
             # TODO: handle error as internal server error
             pass
-        context = {'user': self.acct.user, 'comment': comment}
+        context = {'user': self.user, 'comment': comment}
         msg = self.render_str(context, 'comment.html')
         return self.json_write({'id': urlkey, 'comment': msg})
 
@@ -372,7 +374,7 @@ class CreateBlogHandler(BaseHandler):
         title = util.squeeze(title, string.whitespace)
         text = self.request.get('text').strip()
         text = util.squeeze(text, string.whitespace)
-        blog = models.Blog(user=self.acct.user, title=title, text=text)
+        blog = models.Blog(user=self.user, title=title, text=text)
         try:
             blog.put()
         except ndb.TransactionFailedError:
@@ -444,11 +446,11 @@ class DeleteBlogHandler(BaseHandler):
         :param urlkey
             The blog key in url safe format.
         """
-        query = models.BlogComment.query(
-            models.BlogComment.blog == self.db_resource.key)
+        blog = self.db_resource
+        query = models.BlogComment.query(models.BlogComment.blog == blog.key)
         comment_keys = [comment.key for comment in query.fetch()]
         try:
-            self.db_resource.key.delete()
+            blog.key.delete()
             ndb.delete_multi(comment_keys)
         except ndb.TransactionFailedError:
             # TODO: handle error as internal server error
@@ -475,7 +477,7 @@ class ViewBlogHandler(BaseHandler):
         context = self.get_context(self.db_resource, self.is_session, comments)
         # check if user likes blog
         if self.is_session:
-            context['user'] = self.acct.user
+            context['user'] = self.user
             if self.acct.key in self.db_resource.likes:
                 context['heart'] = 'red-heart'
         return self.render(context, 'blog.html')
@@ -506,18 +508,21 @@ class EditCommentHandler(BaseHandler):
     """Handles the request to edit a blog comment."""
 
     @check_session
-    @check_resource
-    @check_ownership
     def post(self):
         """Saves or deletes the comment and redirects to blog post."""
         data = self.json_read()
-        self.db_resource.comment = data['text'].strip()
+        comment = ndb.Key(urlsafe=data['id']).get()
+        if not comment:
+            return self.error(404)
+        if not comment.is_author(self.user):
+            return self.redirect('/')
+        comment.comment = data['text'].strip()
         try:
-            self.db_resource.put()
+            comment.put()
         except ndb.TransactionFailedError:
             # TODO: handle error as internal server error
             pass
-        context = {'user': self.acct.user, 'comment': self.db_resource}
+        context = {'user': self.user, 'comment': comment}
         msg = self.render_str(context, 'comment.html')
         data = {'id': data['id'], 'comment': msg}
         return self.json_write(data)
@@ -552,7 +557,7 @@ class LikeBlogHandler(BaseHandler):
     def get(self, urlkey):
         data = {'add': False, 'remove': False}
         # Don't allow users to like their own blogs
-        if self.db_resource.is_author(self.acct.user):
+        if self.db_resource.is_author(self.user):
             return self.json_write(data)
 
         # User is unliking
