@@ -65,6 +65,23 @@ def check_resource(func):
         return func(self, urlkey)
     return wrapper
 
+def check_ownership(func):
+    """Defines a decorator function that enforces the ownership of a database
+    resource.
+
+    :param func
+        The callable object to wrap.
+    """
+    @functools.wraps(func)
+    def wrapper(*args):
+        if not args:
+            raise ValueError("Missing handler object")
+        handler = args[0]
+        if not handler.db_resource.is_author(handler.acct.user):
+            return self.redirect('/')
+        return func(args)
+    return wrapper
+
 # TODO: create wrapper that checks resource, i.e., blog or comment
 # TODO: create wrapper that checks ownership of resource
 
