@@ -21,9 +21,7 @@ The following handlers are defined:
 - DeleteBlogHandler
 """
 
-import datetime
 import os
-import hmac
 import json
 import string
 import functools
