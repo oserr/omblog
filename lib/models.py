@@ -125,15 +125,9 @@ class Comment(ndb.Model):
         """
         return self.comment.split('\n')
 
-    def is_author(self, author):
-        """Returns true if the author is the author of this comment.
-
-        :param author
-            A user name.
-        :returns
-            True if author is the author of this blog comment.
-        """
-        return self.user == author
+    def is_author(self, user):
+        """Returns true user is the author of this comment."""
+        return self.user == user
 
     def get_timedelta(self):
         """Returns a string representing the timedelta since the comment was
