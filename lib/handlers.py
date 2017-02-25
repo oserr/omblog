@@ -134,6 +134,11 @@ class BaseHandler(webapp2.RequestHandler):
             if user and user.pwd_hash == hsh:
                 self.user = user
 
+    @property
+    def is_session(self):
+        """Return true if user is logged in, false otherwise."""
+        return bool(self.user)
+
     def write(self, strval):
         """Wrapper around self.response.out.write.
 
