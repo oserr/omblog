@@ -25,9 +25,9 @@ def check_str_not_empty(prop, content):
     return content
 
 
-class Account(ndb.Model):
+class User(ndb.Model):
     """
-    Represents a user with an account to write blogs.
+    Represents a user.
 
     Fields:
         id: The user name for the account.
@@ -46,14 +46,14 @@ class Blog(ndb.Model):
         user: The blog author.
         title: The blog title.
         date: The date-time the blog was created.
-        blog: The blog content.
-        likes: The number of like votes.
+        text: The blog content.
+        likes: List of users who have liked blog.
     """
-    user = ndb.StringProperty(required=True)
+    user = ndb.KeyProperty(kind=User, required=True)
     title = ndb.StringProperty(required=True)
     date = ndb.DateTimeProperty(required=True, auto_now_add=True)
     text = ndb.TextProperty(required=True, validator=check_str_not_empty)
-    likes = ndb.KeyProperty(kind=Account, repeated=True)
+    likes = ndb.KeyProperty(kind=User, repeated=True)
 
     def is_author(self, author):
         """Returns true if author is the author of this blog.
