@@ -40,12 +40,12 @@ def check_session(func):
     request is not a session request, i.e., user is not logged in.
     """
     @functools.wraps(func)
-    def session_wrapper(self, urlkey=None):
-        if not self.is_session:
+    def session_wrapper(*args):
+        if not args:
+            return self.error(404)
+        if not args[0].is_session:
             return self.redirect('/login')
-        if not urlkey:
-            return func(self)
-        return func(self, urlkey)
+        return func(args)
     return session_wrapper
 
 def check_resource(func):
