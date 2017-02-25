@@ -475,8 +475,9 @@ class ViewBlogHandler(BaseHandler):
             The blog key in url safe format.
         """
         blog = self.db_resource
-        comments = models.Comment.query(models.Comment.blog == blog.key).
-            order(models.Comment.date).fetch()
+        Comment = models.Comment
+        comments = Comment.query(
+            Comment.blog == blog.key).order(Comment.date).fetch()
         context = self.get_context(blog, self.is_session, comments)
         # check if user likes blog
         if self.is_session:
