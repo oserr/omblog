@@ -91,6 +91,7 @@ class BaseHandler(webapp2.RequestHandler):
         self.initialize(request, response)
         self.is_session = False
         self.acct = None
+        self.db_resource = None
         user = self.request.cookies.get('name')
         hsh = self.request.cookies.get('secret')
         if user and hsh:
