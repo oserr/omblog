@@ -424,11 +424,12 @@ class SaveBlogHandler(BaseHandler):
         :param urlkey
             The blog key in url safe format.
         """
-        self.db_resource.title = self.request.get('title').strip()
-        self.db_resource.text = self.request.get('text').strip()
+        blog = self.db_resource
+        blog.title = self.request.get('title').strip()
+        blog.text = self.request.get('text').strip()
         # TODO: might be a good idea to add a last edited field to blog model
         try:
-            self.db_resource.put()
+            blog.put()
         except ndb.TransactionFailedError:
             # TODO: handle error as internal server error
             pass
