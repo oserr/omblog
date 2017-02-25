@@ -101,7 +101,7 @@ class Blog(ndb.Model):
         return self.text[:MAX_TOKENS_IN_TEASE].rstrip()
 
 
-class BlogComment(ndb.Model):
+class Comment(ndb.Model):
     """
     A blog commment.
 
@@ -109,12 +109,12 @@ class BlogComment(ndb.Model):
         blog: The key property of the blog for which this is a comment.
         user: The user who posted this comment.
         date: The date-time the comment was posted.
-        comment: The comment.
+        text: The comment's text.
     """
-    blog = ndb.KeyProperty(required=True)
-    user = ndb.StringProperty(required=True)
+    blog = ndb.KeyProperty(kind=Blog, required=True)
+    user = ndb.KeyProperty(kind=User, required=True)
     date = ndb.DateTimeProperty(required=True, auto_now_add=True)
-    comment = ndb.TextProperty(required=True, validator=check_str_not_empty)
+    text = ndb.TextProperty(required=True, validator=check_str_not_empty)
 
     @property
     def lines(self):
