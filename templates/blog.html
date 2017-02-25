@@ -22,7 +22,7 @@
       <div class="col-md-8 col-centered">
         <h1 class="article-title">{{ blog.title }}</h1>
         <time class="article-date" datetime="{{ blog.date }}">
-          Posted {{ blog.date.strftime('%d %B %Y') }} by {{ blog.user }}
+          Posted {{ blog.date.strftime('%d %B %Y') }} by {{ blog.user.key.id() }}
       </div>
     </header>
     <article class="row article-content col-centered">
@@ -30,7 +30,7 @@
         {% for line in blog.lines %}
         <p>{{ line }}</p>
         {% endfor %}
-        {% if loggedin and blog.is_author(user) %}
+        {% if loggedin and blog.is_author(user_key) %}
         <a class="btn btn-default pull-right" href="/edit-blog/{{ blog_id }}" role="button">Edit</a>
         {% endif %}
       </div>
