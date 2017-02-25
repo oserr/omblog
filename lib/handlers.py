@@ -540,6 +540,8 @@ class DeleteCommentHandler(BaseHandler):
         comment = ndb.Key(urlsafe=comment_id).get()
         if not comment:
             return self.error(404)
+        if not comment.is_author(self.user.key):
+            return self.redirect('/')
         data['id'] = None
         try:
             comment.key.delete()
