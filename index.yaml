@@ -10,11 +10,6 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
-- kind: BlogComment
-  properties:
-  - name: blog
-  - name: date
-
 - kind: Comment
   properties:
   - name: blog
