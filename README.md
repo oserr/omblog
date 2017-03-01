@@ -16,6 +16,7 @@ or absolutley.
 
 * Blog layout inspired by [Jake Archibalds blog][3].
 * There are many places where app can be improved, e.g.:
+  * Use SSL/TLS.
   * Error handling.
   * Login redirection. Example: when users try to like a blog post without being
   signed in, they are redirected to sign in, however, they are not redirected
