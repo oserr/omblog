@@ -21,6 +21,10 @@ or absolutley.
   * Login redirection. Example: when users try to like a blog post without being
   signed in, they are redirected to sign in, however, they are not redirected
   back to where they were before the first redirection.
+  * Make comment and blog forms full blown editors so that users have more
+  freedom of expression, and to make it easier to tag the content of the blog
+  or comment with HTML, e.g., bullet points, font styles, font color, pictures,
+  etc.
 
 [1]: https://cloud.google.com/sdk/downloads
 [2]: https://cloud.google.com/appengine/docs/python/console/
