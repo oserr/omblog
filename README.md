@@ -17,7 +17,9 @@ or absolutley.
 * Blog layout inspired by [Jake Archibalds blog][3].
 * There are many places where app can be improved, e.g.:
   * Use SSL/TLS.
-  * Error handling.
+  * Improved error handling
+    * For AJAX requests, make sure body is not empty.
+    * If possible, provide error messages.
   * Login redirection. Example: when users try to like a blog post without being
   signed in, they are redirected to sign in, however, they are not redirected
   back to where they were before the first redirection.
